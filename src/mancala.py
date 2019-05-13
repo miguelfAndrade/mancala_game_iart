@@ -216,11 +216,9 @@ def main():
     while(not game_over(board)):
         print("Player " + str(player + 1) + " turn!")
         piece = parse_input(int(input("Choose your Piece: ")))
-        print(piece)
         if(not verify_move(piece, player, board)):
             continue
         player = move_piece(piece,player,board)
-        time.sleep(1)
         print_board_cmd_line(board)
     
     winner = player_win(board[6], board[13])
