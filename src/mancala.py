@@ -1,4 +1,14 @@
 import time
+# import pygame
+import sys
+import math
+
+
+BOARD_SIZE = 14
+
+PL_1_STORE = 6
+PL_2_STORE = 13
+
 
 opposite = {
     0 : 12,
@@ -20,16 +30,23 @@ def init_board(size):
     # for i in range(size):
     #     board[i] = i
     for i in range(size):
-        if(i != 6 and i != (size-1)):
+        if(i != PL_1_STORE and i != (PL_2_STORE)):
             board[i] = 4
    
-    # for i in range(size):
-    #     if(i >= 7 and i < 13):
-    #         board[i] = 0
-   
-    # board[6] = 20
+    # board[0] = 4
+    # board[1] = 0
+    # board[2] = 0
+    # board[3] = 11
+    # board[4] = 4
+    # board[5] = 3
+    # board[6] = 4
+    # board[7] = 0
+    # board[8] = 6
+    # board[9] = 5
+    # board[10] = 2
     # board[11] = 0
     # board[12] = 0
+    # board[13] = 9
 
     return board
 
@@ -38,39 +55,39 @@ def game_over(board):
     count1 = 0
     count2 = 0
     for i in range(len(board)):
-        if(i >= 0 and i < 6):
+        if(i >= 0 and i < PL_1_STORE):
             if(board[i] == 0):
                 count1 += 1
-        if(i > 6 and i < 13):
+        if(i > PL_1_STORE and i < PL_2_STORE):
             if(board[i] == 0):
                 count2 += 1
 
     if(count1 == 6):
-        for i in range(6,13):
-            board[13] += board[i]
+        for i in range(7,13):
+            board[PL_2_STORE] += board[i]
         return True
     elif(count2 == 6):
-        for i in range(0,6):
-            board[6] += board[i]
+        for i in range(0,PL_1_STORE):
+            board[PL_1_STORE] += board[i]
         return True
     else:
         return False
 
 
 
-def player_win(n_seed_pl_1, n_seed_pl_2):
-    if(n_seed_pl_1 > n_seed_pl_2):
+def player_win(board):
+    if(board[PL_1_STORE] > board[PL_2_STORE]):
         return 1
-    elif(n_seed_pl_1 < n_seed_pl_2):
+    elif(board[PL_1_STORE] < board[PL_2_STORE]):
         return 2
     else:
         return 0    
     
 
 def parse_input(inpt):
-    if(inpt > 0 and inpt < 7):
+    if(inpt > 0 and inpt <= PL_1_STORE):
         return inpt - 1
-    elif(inpt > 6 and inpt < 13):
+    elif(inpt > PL_1_STORE and inpt < PL_2_STORE):
         return inpt
     else:
         return
@@ -80,13 +97,13 @@ def eat_seeds(pos, player, board):
 
     if(player == 0):
         if(board[opposite[pos]] != 0):
-            board[6] += (board[pos]+board[opposite[pos]])
+            board[PL_1_STORE] += (board[pos]+board[opposite[pos]])
             board[pos] = 0
             board[opposite[pos]] = 0
 
     if(player == 1):
         if(board[opposite[pos]] != 0):
-            board[13] += (board[pos]+board[opposite[pos]])
+            board[PL_2_STORE] += (board[pos]+board[opposite[pos]])
             board[pos] = 0
             board[opposite[pos]] = 0
 
@@ -98,13 +115,13 @@ def move_piece(pos, player, board):
         board[pos] = 0
         i = pos+1
         while(hand > 0):
-            if(i == 13):
+            if(i == PL_2_STORE):
                 i = 0
-            if(hand == 1 and board[i] == 0 and (i >= 0 and i < 6)):
+            if(hand == 1 and board[i] == 0 and (i >= 0 and i < PL_1_STORE)):
                 board[i] += 1
                 eat_seeds(i, player, board)
                 hand -= 1
-            elif(hand == 1 and i == 6):
+            elif(hand == 1 and i == PL_1_STORE):
                 board[i] += 1
                 return player
             else:
@@ -117,15 +134,15 @@ def move_piece(pos, player, board):
         board[pos] = 0
         i = pos+1
         while(hand > 0):
-            if(i == 6):
+            if(i == PL_1_STORE):
                 i += 1
-            if(i > 13):
+            if(i > PL_2_STORE):
                 i = 0
-            if(hand == 1 and board[i] == 0 and (i > 6 and i < 13)):
+            if(hand == 1 and board[i] == 0 and (i > PL_1_STORE and i < PL_2_STORE)):
                 board[i] += 1
                 eat_seeds(i, player, board)
                 hand -= 1
-            elif(hand == 1 and i == 13):
+            elif(hand == 1 and i == PL_2_STORE):
                 board[i] += 1
                 return player
             else:
@@ -143,7 +160,7 @@ def move_piece(pos, player, board):
 def verify_move(pos, player, board):
     if(pos == None):
         print_board_cmd_line(board)
-        print("Invalid Input!!")
+        print("INVALID INPUT!!")
         return False
     if(player == 0):
         if(pos < 0 or pos > 6):
@@ -205,33 +222,4 @@ def print_board_cmd_line(board):
     st += "|  |"
     print(st)
     print("------01----02----03----04----05----06-----\n")
-
-
-
-def main():
-    board = init_board(14)
-    print_board_cmd_line(board)
-    player = 0
-    winner = 0
-    while(not game_over(board)):
-        print("Player " + str(player + 1) + " turn!")
-        piece = parse_input(int(input("Choose your Piece: ")))
-        if(not verify_move(piece, player, board)):
-            continue
-        player = move_piece(piece,player,board)
-        print_board_cmd_line(board)
-    
-    winner = player_win(board[6], board[13])
-    print("GAME OVER")
-    print("Number of seeds:")
-    print("Player 1: " + str(board[6]))
-    print("Player 2: " + str(board[13]))
-    if(winner != 0):
-        print("Player " + str(winner) + " won the game!!!")
-    else:
-        print("It's a draw!!")
-
-
-main()
-
 
