@@ -131,14 +131,14 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
         value = -math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            print("max: " + str(pos))
+            # print("max: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp == player):
                 new_score = minimax(b_copy, board, depth-1, True, player_tmp)[1]
             else:
                 new_score = minimax(b_copy, board, depth-1, False, player_tmp)[1]
-            print("max score: " + str(new_score))
+            # print("max score: " + str(new_score))
             if(new_score > value):
                 value = new_score
                 best_pos = pos
@@ -147,14 +147,14 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
         value = math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            print("min: " + str(pos))
+            # print("min: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp != player):
                 new_score = minimax(b_copy, board, depth-1, True, player_tmp)[1]
             else:
                 new_score = minimax(b_copy, board, depth-1, False, player_tmp)[1]
-            print("min score: " + str(new_score))
+            # print("min score: " + str(new_score))
             if(new_score < value):
                 value = new_score
                 best_pos = pos
