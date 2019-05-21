@@ -6,6 +6,7 @@ import pygame
 
 import mancala
 import ai
+import ui
 
 
 def player_vs_player(board):
@@ -213,7 +214,7 @@ def main_cmd_line_game():
 def choose_cmd_or_gui():
     print("\n\n\nMANCALA BOARD GAME")
     print("\nSelect one of the options:")
-    print("1 - Comand line Game")
+    print("1 - Command Line Game")
     print("2 - Graphical Interface Game")
     while(True):
         try:
@@ -229,31 +230,9 @@ def choose_cmd_or_gui():
     if(user == 1):
         main_cmd_line_game()
     else:
-        main_gui()
-        # print("Not implemented!")
+        # ui.main_gui()
+        print("Not implemented yet!")
 
-
-def main_gui():
-
-    pygame.init()
-
-    size = width, height = 800, 600
-    speed = [2, 2]
-    white = (255, 255, 255)
-
-    screen = pygame.display.set_mode(size)
-
-    pygame.display.set_caption("Mancala")
-
-    board = mancala.init_board(mancala.BOARD_SIZE)
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: 
-                sys.exit()
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                print("Hello!!!!")
 
 
 choose_cmd_or_gui()

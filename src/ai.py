@@ -6,13 +6,13 @@ import random
 import mancala
 
 
-
+# generates a random number from the available positions
 def random_number_gen(board, player):
     valid_moves = playable_pos_list(board, player)
     pos = random.choices(valid_moves)[0]
     return pos
-    
 
+# retrives the available positions for the player
 def playable_pos_list(board, player):
     pos_list = []
     for i in range(len(board)):
@@ -27,10 +27,11 @@ def playable_pos_list(board, player):
     return pos_list
 
 
-
+# evaluates how good is the move based in the number of seeds in the player deposit comparing with:
+# the oponent deposit
+# last move
 def heuristic_2(board, old_board, player):
     score = 0
-    # print("Player in score_heuristic function: " + str(player))
     if(player == 1):
         if(board[mancala.PL_1_STORE] > old_board[mancala.PL_1_STORE]):
             score += 12
@@ -43,24 +44,23 @@ def heuristic_2(board, old_board, player):
     if(player == 0):
         if(board[mancala.PL_2_STORE] > old_board[mancala.PL_2_STORE]):
             score += 12
-            # print("É maior que o antigo")
         if(board[mancala.PL_2_STORE] > board[mancala.PL_1_STORE]):
             score += 10
-            # print("É maior que o adversário")
         if(board[mancala.PL_2_STORE] < board[mancala.PL_1_STORE]):
             score -= 8
-            # print("É menor que o adversário")
         else:
             score += 0
     
     return score
 
+# evaluates how good is the move based in the number of seeds in the player deposit
 def heuristic(board, player):
     if(player == 0):
         return (board[mancala.PL_1_STORE] - board[mancala.PL_2_STORE])
     if(player == 1):
         return (board[mancala.PL_2_STORE] - board[mancala.PL_1_STORE])
 
+# picks the best move based on the score calculated with the heuristic_2 function
 def pick_best_pos(board, player):
     valid_locations = playable_pos_list(board, player)
     best_score = -1000000
@@ -97,15 +97,14 @@ def pick_best_pos(board, player):
 # (* Initial call *)
 # minimax(origin, depth, TRUE)
 
+# return true if it is a terminal node and false if it is not
 def terminal_node(board):
     return mancala.game_over(board)
 
-
+# minimax algorithm based on the above commented pseudocode
 def minimax(board, old_board, depth, maximizingPlayer, player):
     valid_locations = playable_pos_list(board, player)
     is_terminal = terminal_node(board)
-
-    # print("Depth:" + str(depth) + " | Player: " + str(player) + " | Maximizing: " + str(maximizingPlayer)) 
 
     if (depth == 0 or is_terminal):
         if(is_terminal):
@@ -120,8 +119,6 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
             else:
                 return (None, 0)
         else:
-            # value = score_for_more_seeds(board, old_board, player)
-            # value = score_heuristic(board, old_board, player)
             value = heuristic(board, player)
             return (None, value)
 
@@ -129,14 +126,12 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
         value = -math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            # print("max: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp == player):
                 new_score = minimax(b_copy, board, depth-1, True, player_tmp)[1]
             else:
                 new_score = minimax(b_copy, board, depth-1, False, player_tmp)[1]
-            # print("max score: " + str(new_score))
             if(new_score > value):
                 value = new_score
                 best_pos = pos
@@ -145,14 +140,12 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
         value = math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            # print("min: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp != player):
                 new_score = minimax(b_copy, board, depth-1, True, player_tmp)[1]
             else:
                 new_score = minimax(b_copy, board, depth-1, False, player_tmp)[1]
-            # print("min score: " + str(new_score))
             if(new_score < value):
                 value = new_score
                 best_pos = pos
@@ -181,12 +174,10 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
 # (* Initial call *)
 # alphabeta(origin, depth, −∞, +∞, TRUE)
 
-
+# minimax algorithm with alpha beta pruning based on the above commented pseudocode
 def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, player):
     valid_locations = playable_pos_list(board, player)
     is_terminal = terminal_node(board)
-
-    # print("Depth:" + str(depth) + " | Player: " + str(player) + " | Maximizing: " + str(maximizingPlayer)) 
 
     if (depth == 0 or is_terminal):
         if(is_terminal):
@@ -201,8 +192,6 @@ def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, p
             else:
                 return (None, 0)
         else:
-            # value = score_for_more_seeds(board, old_board, player)
-            # value = score_heuristic(board, old_board, player)
             value = heuristic(board, player)
             return (None, value)
 
@@ -210,14 +199,12 @@ def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, p
         value = -math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            # print("max: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp == player):
                 new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, True, player_tmp)[1]
             else:
                 new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, False, player_tmp)[1]
-            # print("max score: " + str(new_score))
             if(new_score > value):
                 value = new_score
                 best_pos = pos
@@ -229,14 +216,12 @@ def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, p
         value = math.inf
         best_pos = random.choice(valid_locations)
         for pos in valid_locations:
-            # print("min: " + str(pos))
             b_copy = board.copy()
             player_tmp = mancala.move_piece(pos, player, b_copy)
             if(player_tmp != player):
                 new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, True, player_tmp)[1]
             else:
                 new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, False, player_tmp)[1]
-            # print("min score: " + str(new_score))
             if(new_score < value):
                 value = new_score
                 best_pos = pos
