@@ -5,14 +5,13 @@ import random
 
 import mancala
 
-# 1. Ao jogar ver se pode comer uma peça
-# 2. Ao jogar ver se tem possibilidade de jogar de novo
-# 3. Ao jogar verificar se tem mais peças acumuladas que o adversário
+
 
 def random_number_gen(board, player):
     valid_moves = playable_pos_list(board, player)
     pos = random.choices(valid_moves)[0]
     return pos
+    
 
 def playable_pos_list(board, player):
     pos_list = []
@@ -80,6 +79,8 @@ def pick_best_pos(board, player):
     
     return best_pos
 
+
+
 # function minimax(node, depth, maximizingPlayer) is
 #     if depth = 0 or node is a terminal node then
 #         return the heuristic value of node
@@ -123,9 +124,6 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
             # value = score_heuristic(board, old_board, player)
             value = heuristic(board, player)
             return (None, value)
-        # value = score_for_more_seeds(board, old_board, player)
-        # value = score_heuristic(board, old_board, player)
-        # return (None, value)
 
     if(maximizingPlayer):
         value = -math.inf
@@ -158,5 +156,92 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
             if(new_score < value):
                 value = new_score
                 best_pos = pos
+        return (best_pos, value)
+
+
+# function alphabeta(node, depth, α, β, maximizingPlayer) is
+#     if depth = 0 or node is a terminal node then
+#         return the heuristic value of node
+#     if maximizingPlayer then
+#         value := −∞
+#         for each child of node do
+#             value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
+#             α := max(α, value)
+#             if α ≥ β then
+#                 break (* β cut-off *)
+#         return value
+#     else
+#         value := +∞
+#         for each child of node do
+#             value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
+#             β := min(β, value)
+#             if α ≥ β then
+#                 break (* α cut-off *)
+#         return value
+# (* Initial call *)
+# alphabeta(origin, depth, −∞, +∞, TRUE)
+
+
+def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, player):
+    valid_locations = playable_pos_list(board, player)
+    is_terminal = terminal_node(board)
+
+    # print("Depth:" + str(depth) + " | Player: " + str(player) + " | Maximizing: " + str(maximizingPlayer)) 
+
+    if (depth == 0 or is_terminal):
+        if(is_terminal):
+            if(mancala.player_win(board) == 1 and (player == 0)):
+                return (None, 100000000000000)
+            elif(mancala.player_win(board) == 1 and (player == 1)):
+                return (None, -100000000000000 )
+            elif(mancala.player_win(board) == 2 and (player == 1)):
+                return (None, 100000000000000)
+            elif(mancala.player_win(board) == 2 and (player == 0)):
+                return (None, -100000000000000 )
+            else:
+                return (None, 0)
+        else:
+            # value = score_for_more_seeds(board, old_board, player)
+            # value = score_heuristic(board, old_board, player)
+            value = heuristic(board, player)
+            return (None, value)
+
+    if(maximizingPlayer):
+        value = -math.inf
+        best_pos = random.choice(valid_locations)
+        for pos in valid_locations:
+            # print("max: " + str(pos))
+            b_copy = board.copy()
+            player_tmp = mancala.move_piece(pos, player, b_copy)
+            if(player_tmp == player):
+                new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, True, player_tmp)[1]
+            else:
+                new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, False, player_tmp)[1]
+            # print("max score: " + str(new_score))
+            if(new_score > value):
+                value = new_score
+                best_pos = pos
+            alpha = max(alpha, value)
+            if(alpha >= beta):
+                break
+        return (best_pos, value)
+    else:
+        value = math.inf
+        best_pos = random.choice(valid_locations)
+        for pos in valid_locations:
+            # print("min: " + str(pos))
+            b_copy = board.copy()
+            player_tmp = mancala.move_piece(pos, player, b_copy)
+            if(player_tmp != player):
+                new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, True, player_tmp)[1]
+            else:
+                new_score = minimax_alpha_beta(b_copy, board, depth-1, alpha, beta, False, player_tmp)[1]
+            # print("min score: " + str(new_score))
+            if(new_score < value):
+                value = new_score
+                best_pos = pos
+            beta = min(beta, value)
+            if(alpha >= beta):
+                break
         return (best_pos, value)
 

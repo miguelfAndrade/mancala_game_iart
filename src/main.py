@@ -1,5 +1,6 @@
 import sys
 import time
+import math
 
 import pygame
 
@@ -88,9 +89,9 @@ def pc_vs_pc(board):
     while(not mancala.game_over(board)):
         if(player == 0):
             print("Player 1 turn!")
-            # piece = ai.random_number_gen(board, player)
             print(player)
             piece, minimax_score = ai.minimax(board, None, 5, True, player)
+            # piece, minimax_score = ai.minimax_alpha_beta(board, None, 5, -math.inf, math.inf, True, player)
             print("Player 1 choose: " + str(piece+1))
             # print("minimax score: " + str(minimax_score))
             if(not mancala.verify_move(piece, player, board)):
