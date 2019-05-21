@@ -8,7 +8,7 @@ import mancala
 import ai
 import ui
 
-
+# player vs player mode in command line
 def player_vs_player(board):
     mancala.print_board_cmd_line(board)
     player = 0
@@ -38,7 +38,7 @@ def player_vs_player(board):
         print("It's a draw!!")
 
 
-
+# player vs pc mode in command line
 def player_vs_pc(board, level):
     mancala.print_board_cmd_line(board)
     player = 0
@@ -77,7 +77,10 @@ def player_vs_pc(board, level):
     else:
         print("It's a draw!!")
 
+    
 
+# pv vs pc mode in command line
+# Receives the depth of the search for each player
 def pc_vs_pc(board, level1, level2):
     mancala.print_board_cmd_line(board)
     player = 0
@@ -117,7 +120,7 @@ def pc_vs_pc(board, level1, level2):
 
 
 
-
+# Game logic for playing the game in the command line
 def main_cmd_line_game():
     print("\n\n\n\n\nChoose your mode:\n")
     print("1 - Player vs Player")
@@ -210,7 +213,7 @@ def main_cmd_line_game():
         pc_vs_pc(board, pc_1, pc_2)
 
 
-
+# Auxiliar function for choosing between the graphical interface and the command line interface
 def choose_cmd_or_gui():
     print("\n\n\nMANCALA BOARD GAME")
     print("\nSelect one of the options:")

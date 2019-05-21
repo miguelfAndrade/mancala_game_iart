@@ -2,13 +2,16 @@ import time
 import sys
 import math
 
-
+# macro for the board size
 BOARD_SIZE = 14
 
-PL_1_STORE = 6
-PL_2_STORE = 13
+PL_1_STORE = 6  # macro for the deposit position for player 1
+PL_2_STORE = 13 # macro for the deposit position for player 2
 
 
+# Variable that stores the opposite position of the current player position
+# This is usefull for the eating procedure in the game
+# If the last seed of a player is in the position 3, he can now eat the opponent seeds in position 9
 opposite = {
     0 : 12,
     1 : 11,
@@ -24,6 +27,8 @@ opposite = {
     12 : 0,
 }
 
+
+# Initiate the board for the given size
 def init_board(size):
     board = [0] * size
     # for i in range(size):
@@ -32,6 +37,8 @@ def init_board(size):
         if(i != PL_1_STORE and i != (PL_2_STORE)):
             board[i] = 4
    
+# Block Commented for testing
+# begin
     # board[0] = 4
     # board[1] = 0
     # board[2] = 0
@@ -46,10 +53,12 @@ def init_board(size):
     # board[11] = 0
     # board[12] = 0
     # board[13] = 9
+# end
 
     return board
 
 
+# Verifies if the board is in a final state, wich means the game is over
 def game_over(board):
     count1 = 0
     count2 = 0
@@ -73,7 +82,7 @@ def game_over(board):
         return False
 
 
-
+# Return the winning player
 def player_win(board):
     if(board[PL_1_STORE] > board[PL_2_STORE]):
         return 1
@@ -82,7 +91,7 @@ def player_win(board):
     else:
         return 0    
     
-
+# Parses the user input to use in the index board
 def parse_input(inpt):
     if(inpt > 0 and inpt <= PL_1_STORE):
         return inpt - 1
@@ -91,6 +100,7 @@ def parse_input(inpt):
     else:
         return
 
+# Handles the logic for the case of a player eats the seeds of the opponent
 def eat_seeds(pos, player, board):
     global opposite
 
@@ -107,6 +117,7 @@ def eat_seeds(pos, player, board):
             board[opposite[pos]] = 0
 
 
+# Handles the logic for moving pieces in the board
 def move_piece(pos, player, board):
     i = 0
     if(player == 0):
@@ -155,7 +166,7 @@ def move_piece(pos, player, board):
 
 
 
-
+# Verifies if the user input move is valid
 def verify_move(pos, player, board):
     if(pos == None):
         print_board_cmd_line(board)
@@ -184,7 +195,7 @@ def verify_move(pos, player, board):
     return True
 
 
-
+# Print to the screen the board
 def print_board_cmd_line(board):
     print("\n------12----11----10----09----08----07-----")
     st = "|  |"
