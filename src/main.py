@@ -88,7 +88,6 @@ def pc_vs_pc(board, level1, level2):
     while(not mancala.game_over(board)):
         if(player == 0):
             print("Player 1 turn!")
-            print(player)
             piece, minimax_score = ai.minimax_alpha_beta(board, None, level1, -math.inf, math.inf, True, player)
             print("Player 1 choose: " + str(piece+1))
             # print("minimax score: " + str(minimax_score))

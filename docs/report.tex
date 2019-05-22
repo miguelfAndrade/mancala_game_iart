@@ -38,16 +38,17 @@ minimax, alpha, beta, mancala, intelig\^encia artificial
 \end{IEEEkeywords}
 
 \section{Introdu\c c\~ao}
+
 Neste segundo projeto o objetivo \'e implementar um jogo para dois jogadores, onde exista a possibilidade de haver dois jogadores humanos a jogar entre si, um jogador humano e um computador e dois computadores a jogar entre si.
 Entre os jogos sugeridos, decidimos escolher o Mancala. 
 
 
-\section{O Jogo (Mancala)}
+\section{Descri\c c\~ao do Problema}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.3]{board_start_big.jpg}}
-\caption{Jogo Mancala}
-\label{img}
+    \centerline{\includegraphics[scale=0.3]{board_start_big.jpg}}
+    \caption{Jogo Mancala}
+    \label{img}
 \end{figure}
 
 O Mancala \'e essencialmente um jogo onde os jogadores “semeiam” e “colhem” sementes\cite{b1}.
@@ -62,16 +63,65 @@ O jogo termina quando todos os 6 buracos de um dos lados ficam vazios. Caso um d
 Quem tiver mais sementes colecionadas \'e o vencedor.
 
 
-\section{Descri\c c\~ao do Problema}
-Inserir texto
-
 \section{Formula\c c\~ao do Problema}
-Inserir texto
+
+\subsection{Representação do Estado}
+O Estado do jogo é representado pelo próprio tabuleiro, sendo que os depósitos dos jogadores são os fatores para decedir quem ganha.
+De forma a poder representar o tabuleiro de jogo, foi usado uma lista de tamanho 14, sendo que os 7 primeiros índices dizem respeito ao primeiro jogador e os restante ao segundo jogador.
+Os índices 6 e 13 são usados para representar os depósitos do primeiro e segundo jogador respetivamente. Define-se "primeiro jogador" o jogador que joga nas casas "inferiores" do tabuleiro e o "segundo jogador" o jogador que controla as casas "superiores".
+A cada casa é atribuído um valor que corresponde ao número de sementes guardadas nessa casa.\\
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{tabuleiro1.jpg}}
+    \caption{Tabuleiro de Jogo}
+    \label{img2}
+\end{figure}
+
+\subsection{Operadores}
+Cada casa jogável é um operador, sendo que as pré-condições são:
+A casa escolhida não estar vazia.
+A casa escolhida pertencer à área do atual jogador.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{tabuleiro2.jpg}}
+    \caption{Várias imagens a demonstrar os operadores}
+    \label{img3}
+\end{figure}
+
+\subsection{Estado Inicial}
+Todas as casas da lista são iniciados com o valor 4, com exceção das casas que representam os depósitos dos jogadores, sendo estas as casas 6 e 13.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{tabuleiro3.jpg}}
+    \caption{Estado Inicial}
+    \label{img4}
+\end{figure}
+
+
+\subsection{Teste Terminal}
+O estado terminal é alcançado quando um dos jogadores fica sem peças para poder continuar a jogar.\\
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{tabuleiro4.jpg}}
+    \caption{Estado Final}
+    \label{img5}
+\end{figure}
+
+\subsection{Fun\c c\~ao Utilidade}
+O jogador ganha caso tenha mais sementes no seu depósito do que o seu adversário. A função utilidade simplesmente verifica quem ganhou a partida e retorna um valor positivo em caso de vitória, um valor negativo em caso de derrota e zero em caso de empate.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{utilidade.jpg}}
+    \caption{Imagem da função utilidade}
+    \label{img6}
+\end{figure}
 
 \section{Trabalho Relacionado}
 
-Na nossa pesquisa encontramos j\'a algum trabalho feito no que toca \`a implementa\c c\~ao deste jogo assim como na implementa\c c\~ao de intelig\^encia artificial\cite{b2}\cite{b3}.
+Na nossa pesquisa encontramos j\'a algum trabalho feito no que toca \`a implementa\c c\~ao deste jogo assim como na implementa\c c\~ao de intelig\^encia artificial\cite{b2}\cite{b3}\cite{b9}.
 Tamb\'em nas aulas da disciplina foram implementados algoritmos id\^enticos ao deste projeto, pelo que certamente serve de fonte de auxílio.
+Apesar de já existirem implementações do jogo mancala com o algoritmo minimax, o projeto do jogo quatro em linha referenciado consegue ser o mais completo, pois a forma como está estruturado separa muito bem a parte referente ao jogo da parte que diz respeito à IA.
+Com esta estrutura conseguimos ter um excelente ponto de partida para o nosso projeto e ideia bem definida daquilo que tinhamos que fazer.
 
 \section{Implementa\c c\~ao do Jogo}
 Inserir Texto
@@ -280,11 +330,11 @@ Apesar de estes algoritmos j\'a terem sido abordados nas aulas, o desafio ser\'a
 \bibitem{b2} https://github.com/mhchong/Mancala-Game
 \bibitem{b3} https://github.com/cypreess/py-mancala
 \bibitem{b4} https://www.johnpratt.com/items/mancala/index.html
-% \bibitem{b5} https://en.wikipedia.org/wiki/Minimax#Pseudocode
-% \bibitem{b6} https://en.wikipedia.org/wiki/Alpha–beta_pruning#Pseudocode
-% \bibitem{b7} https://www.ultraboardgames.com/mancala/strategies.php
-% \bibitem{b8} https://www.ultraboardgames.com/mancala/best-opening-move.php
-% \bibitem{b9} https://github.com/KeithGalli/Connect4-Python
+\bibitem{b5} https://en.wikipedia.org/wiki/Minimax#Pseudocode
+\bibitem{b6} https://en.wikipedia.org/wiki/Alpha–beta\_pruning#Pseudocode
+\bibitem{b7} https://www.ultraboardgames.com/mancala/strategies.php
+\bibitem{b8} https://www.ultraboardgames.com/mancala/best-opening-move.php
+\bibitem{b9} https://github.com/KeithGalli/Connect4-Python
 \end{thebibliography}
 % \vspace{12pt}
 % \color{red}

@@ -1,3 +1,21 @@
 Report ---------------[-]
-Graphical interface - [-]
+    Screeshots--------[-]
+    Testes players----[-]
+    Conteúdo----------[-]
 Code commented -------[X]
+Graphical interface - [-]
+
+trocar no latex:
+à
+á
+ã
+â
+é
+ê
+í
+ó
+õ
+ô
+ú
+û
+ç

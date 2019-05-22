@@ -30,6 +30,7 @@ def playable_pos_list(board, player):
 # evaluates how good is the move based in the number of seeds in the player deposit comparing with:
 # the oponent deposit
 # last move
+# not a very good heuristic
 def heuristic_2(board, old_board, player):
     score = 0
     if(player == 1):
@@ -60,24 +61,41 @@ def heuristic(board, player):
     if(player == 1):
         return (board[mancala.PL_2_STORE] - board[mancala.PL_1_STORE])
 
+#Utility function
+def utility_function(board, player):
+    if(player == 0):
+        if(mancala.player_win(board) == 1):
+            return (None, 100000000000000)
+        elif(mancala.player_win(board) == 2):
+            return (None, -100000000000000)
+        else:
+            return (None, 0)
+    if(player == 1):
+        if(mancala.player_win(board) == 2):
+            return (None, 100000000000000)
+        elif(mancala.player_win(board) == 1):
+            return (None, -100000000000000)
+        else:
+            return (None, 0)
+
 # picks the best move based on the score calculated with the heuristic_2 function
 def pick_best_pos(board, player):
     valid_locations = playable_pos_list(board, player)
     best_score = -1000000
     best_pos = random.choice(valid_locations)
     for pos in valid_locations:
-        print("POS: " + str(pos))
+        # print("POS: " + str(pos))
         temp_board = board.copy()
         pl_temp = mancala.move_piece(pos, player, temp_board)
         score = heuristic_2(temp_board, board, player)
-        # score = score_heuristic(temp_board, player)
-        print("SCORE: " + str(score))
-        print("BEST SCORE: " + str(best_score))
+        # score = heuristic(temp_board, player)
+        # print("SCORE: " + str(score))
+        # print("BEST SCORE: " + str(best_score))
         if(score > best_score):
             best_score = score
             best_pos = pos
     
-    return best_pos
+    return best_pos, best_score
 
 
 
@@ -108,18 +126,10 @@ def minimax(board, old_board, depth, maximizingPlayer, player):
 
     if (depth == 0 or is_terminal):
         if(is_terminal):
-            if(mancala.player_win(board) == 1 and (player == 0)):
-                return (None, 100000000000000)
-            elif(mancala.player_win(board) == 1 and (player == 1)):
-                return (None, -100000000000000 )
-            elif(mancala.player_win(board) == 2 and (player == 1)):
-                return (None, 100000000000000)
-            elif(mancala.player_win(board) == 2 and (player == 0)):
-                return (None, -100000000000000 )
-            else:
-                return (None, 0)
+            return utility_function(board, player)
         else:
-            value = heuristic(board, player)
+            # value = heuristic(board, player)
+            value = pick_best_pos(board, player)[1]
             return (None, value)
 
     if(maximizingPlayer):
@@ -181,18 +191,10 @@ def minimax_alpha_beta(board, old_board, depth, alpha, beta, maximizingPlayer, p
 
     if (depth == 0 or is_terminal):
         if(is_terminal):
-            if(mancala.player_win(board) == 1 and (player == 0)):
-                return (None, 100000000000000)
-            elif(mancala.player_win(board) == 1 and (player == 1)):
-                return (None, -100000000000000 )
-            elif(mancala.player_win(board) == 2 and (player == 1)):
-                return (None, 100000000000000)
-            elif(mancala.player_win(board) == 2 and (player == 0)):
-                return (None, -100000000000000 )
-            else:
-                return (None, 0)
+            return utility_function(board, player)
         else:
             value = heuristic(board, player)
+            # value = pick_best_pos(board, player)[1]
             return (None, value)
 
     if(maximizingPlayer):
