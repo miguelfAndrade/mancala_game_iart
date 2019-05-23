@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{multirow}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -30,7 +31,7 @@ up201811491@fe.up.pt}
 \maketitle
 
 \begin{abstract}
-O jogo a ser implementado ser\'a o Mancala. Começaremos por fazer uma implementaç\~ao do jogo acrescentando depois o algoritmo minimax com os cortes alpha e beta. Posteriormente acrescentaremos uma interface gr\'afica de forma a que a experi\^encia de jogo seja agrad\'avel.
+O jogo implementado foi o Mancala. Um jogo simples que consiste em semear e colher sementes. Come\c caremos por abordar a implementa\c c\~ao do jogo, falando depois no algoritmo minimax e a vers\~ao com os cortes alpha e beta. Nos teste decorridos não houve surpresa ao verificar que o algoritmo minimax alpha-beta apresentou os melhores resultados em termos de efici\^encia no que toca ao tempo decorrido. Verificamos tamb\'em que o algoritmo implementado conseguiu superar bastante bem os jogos com um agente aleat\'orio como advers\'ario.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -40,7 +41,7 @@ minimax, alpha, beta, mancala, intelig\^encia artificial
 \section{Introdu\c c\~ao}
 
 Neste segundo projeto o objetivo \'e implementar um jogo para dois jogadores, onde exista a possibilidade de haver dois jogadores humanos a jogar entre si, um jogador humano e um computador e dois computadores a jogar entre si.
-Entre os jogos sugeridos, decidimos escolher o Mancala. 
+O jogo implementado foi o mancala. Como o foco do projeto \'e a parte referente aos agentes inteligentes, vamos abordar varia\c c\~oes do algoritmo minimax assim como diferentes heur\'isticas.
 
 
 \section{Descri\c c\~ao do Problema}
@@ -53,88 +54,198 @@ Entre os jogos sugeridos, decidimos escolher o Mancala.
 
 O Mancala \'e essencialmente um jogo onde os jogadores “semeiam” e “colhem” sementes\cite{b1}.
 O objetivo do jogo \'e colecionar mais sementes que o advers\'ario.
-O tabuleiro de jogo \'e constituído por duas filas de 6 buracos cada uma, e na extremidades encontra-se  a mancala (dep\'osito das sementes) onde se coleciona as sementes de cada jogador.
+O tabuleiro de jogo \'e constitu\'ido por duas filas de 6 buracos cada uma, e na extremidades encontra-se  a mancala (dep\'osito das sementes) onde se coleciona as sementes de cada jogador.
 
-O jogo começa com 4 sementes em cada buraco. Um jogador começa por selecionar um dos seus 6 buracos. Ao selecionar um, este coleciona todas as sementes desse buraco e começa a colocar uma semente em cada um dos buracos seguintes, no sentido contr\'ario ao ponteiros do rel\'ogio, at\'e n\~ao haver mais sementes na sua m\~ao.
+O jogo come\c ca com 4 sementes em cada buraco. Um jogador come\c ca por selecionar um dos seus 6 buracos. Ao selecionar um, este coleciona todas as sementes desse buraco e come\c ca a colocar uma semente em cada um dos buracos seguintes, no sentido contr\'ario ao ponteiros do rel\'ogio, at\'e n\~ao haver mais sementes na sua m\~ao.
 
 Se o jogador encontrar o seu dep\'osito, este continua a jogar, se encontrar o dep\'osito do jogador advers\'ario, ent\~ao salta para o buraco seguinte. Caso seja a \'ultima semente a ser colocada no dep\'osito do pr\'oprio jogador, ent\~ao este tem direito jogar mais uma vez.
 Se a \'ultima semente for colocado num buraco vazio do lado do pr\'oprio jogador, ent\~ao este pode colecionar as todas as sementes no buraco oposto, incluindo a pr\'opria semente colocada.
-O jogo termina quando todos os 6 buracos de um dos lados ficam vazios. Caso um dos jogadores ainda tenha peças do seu lado quando o jogo termina, ent\~ao este coleciona-as e junta-as ao seu dep\'osito. 
+O jogo termina quando todos os 6 buracos de um dos lados ficam vazios. Caso um dos jogadores ainda tenha pe\c cas do seu lado quando o jogo termina, ent\~ao este coleciona-as e junta-as ao seu dep\'osito. 
 Quem tiver mais sementes colecionadas \'e o vencedor.
 
 
 \section{Formula\c c\~ao do Problema}
 
-\subsection{Representação do Estado}
-O Estado do jogo é representado pelo próprio tabuleiro, sendo que os depósitos dos jogadores são os fatores para decedir quem ganha.
-De forma a poder representar o tabuleiro de jogo, foi usado uma lista de tamanho 14, sendo que os 7 primeiros índices dizem respeito ao primeiro jogador e os restante ao segundo jogador.
-Os índices 6 e 13 são usados para representar os depósitos do primeiro e segundo jogador respetivamente. Define-se "primeiro jogador" o jogador que joga nas casas "inferiores" do tabuleiro e o "segundo jogador" o jogador que controla as casas "superiores".
-A cada casa é atribuído um valor que corresponde ao número de sementes guardadas nessa casa.\\
+\subsection{Representa\c c\~ao do Estado}
+O Estado do jogo \'e representado pelo pr\'oprio tabuleiro, sendo que os dep\'ositos dos jogadores s\~ao os fatores para decedir quem ganha.
+De forma a poder representar o tabuleiro de jogo, foi usado uma lista de tamanho 14, sendo que os 7 primeiros \'indices dizem respeito ao primeiro jogador e os restante ao segundo jogador.
+Os \'indices 6 e 13 s\~ao usados para representar os dep\'ositos do primeiro e segundo jogador respetivamente. Define-se "primeiro jogador" o jogador que joga nas casas "inferiores" do tabuleiro e o "segundo jogador" o jogador que controla as casas "superiores".
+A cada casa \'e atribu\'ido um valor que corresponde ao n\'umero de sementes guardadas nessa casa.\\
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[scale=0.3]{tabuleiro1.jpg}}
+    \centerline{\includegraphics[scale=0.5]{board-middle.png}}
     \caption{Tabuleiro de Jogo}
     \label{img2}
 \end{figure}
 
 \subsection{Operadores}
-Cada casa jogável é um operador, sendo que as pré-condições são:
-A casa escolhida não estar vazia.
-A casa escolhida pertencer à área do atual jogador.
+Cada casa jog\'avel \'e um operador, sendo que as pr\'e-condi\c c\~oes s\~ao:
+\begin{enumerate}
+\item A casa escolhida n\~ao pode estar vazia.
+\item A casa escolhida pertencer \`a \'area do atual jogador.
+\end{enumerate}
 
-\begin{figure}[htbp]
-    \centerline{\includegraphics[scale=0.3]{tabuleiro2.jpg}}
-    \caption{Várias imagens a demonstrar os operadores}
-    \label{img3}
-\end{figure}
 
 \subsection{Estado Inicial}
-Todas as casas da lista são iniciados com o valor 4, com exceção das casas que representam os depósitos dos jogadores, sendo estas as casas 6 e 13.
+Todas as casas da lista s\~ao iniciados com o valor 4, com exce\c c\~ao das casas que representam os dep\'ositos dos jogadores, sendo estas as casas 6 e 13.
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[scale=0.3]{tabuleiro3.jpg}}
+    \centerline{\includegraphics[scale=0.5]{board.png}}
     \caption{Estado Inicial}
     \label{img4}
 \end{figure}
 
 
 \subsection{Teste Terminal}
-O estado terminal é alcançado quando um dos jogadores fica sem peças para poder continuar a jogar.\\
+O estado terminal \'e alcan\c cado quando um dos jogadores fica sem pe\c cas para poder continuar a jogar.\\
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[scale=0.3]{tabuleiro4.jpg}}
+    \centerline{\includegraphics[scale=0.5]{board-final.png}}
     \caption{Estado Final}
     \label{img5}
 \end{figure}
 
 \subsection{Fun\c c\~ao Utilidade}
-O jogador ganha caso tenha mais sementes no seu depósito do que o seu adversário. A função utilidade simplesmente verifica quem ganhou a partida e retorna um valor positivo em caso de vitória, um valor negativo em caso de derrota e zero em caso de empate.
+O jogador ganha caso tenha mais sementes no seu dep\'osito do que o seu advers\'ario. A fun\c c\~ao utilidade simplesmente verifica quem ganhou a partida e retorna um valor positivo em caso de vit\'oria, um valor negativo em caso de derrota e zero em caso de empate.
 
 \begin{figure}[htbp]
-    \centerline{\includegraphics[scale=0.3]{utilidade.jpg}}
-    \caption{Imagem da função utilidade}
+    \centerline{\includegraphics[scale=0.5]{utility-function.png}}
+    \caption{Imagem da fun\c c\~ao utilidade}
     \label{img6}
 \end{figure}
 
 \section{Trabalho Relacionado}
 
 Na nossa pesquisa encontramos j\'a algum trabalho feito no que toca \`a implementa\c c\~ao deste jogo assim como na implementa\c c\~ao de intelig\^encia artificial\cite{b2}\cite{b3}\cite{b9}.
-Tamb\'em nas aulas da disciplina foram implementados algoritmos id\^enticos ao deste projeto, pelo que certamente serve de fonte de auxílio.
-Apesar de já existirem implementações do jogo mancala com o algoritmo minimax, o projeto do jogo quatro em linha referenciado consegue ser o mais completo, pois a forma como está estruturado separa muito bem a parte referente ao jogo da parte que diz respeito à IA.
-Com esta estrutura conseguimos ter um excelente ponto de partida para o nosso projeto e ideia bem definida daquilo que tinhamos que fazer.
+Tamb\'em nas aulas da disciplina foram implementados algoritmos id\^enticos ao deste projeto, pelo que certamente serve de fonte de aux\'ilio.
+Apesar de j\'a existirem implementa\c c\~oes do jogo mancala com o algoritmo minimax, o projeto do jogo quatro em linha referenciado consegue ser o mais completo, pois a forma como est\'a estruturado separa muito bem a parte referente ao jogo da parte que diz respeito \`a IA.
+Com esta estrutura conseguimos ter um excelente ponto de partida para o nosso projeto e ideia bem definida daquilo que t\'inhamos que fazer.
 
 \section{Implementa\c c\~ao do Jogo}
-Inserir Texto
+Como j\'a foi referido o tabuleiro de jogo \'e representado p\~oe uma lista de 14 elementos, sendo que cada um deste elementos representa uma casa e o valor guardado refere-se ao n\'umero de sementes nessa mesma casa.
+Os elementos 6 e 13 ficam reservados para o dep\'osito de cada jogador.
+No que toca ao movimento das pe\c cas, criou-se uma fun\c c\~ao \textcolor{blue}{move\_piece}, que recebe a posi\c c\~ao desejada, o jogador que est\'a a jogar e o tabuleiro de jogo. \'e nesta fun\c c\~ao que acontece a verifica\c c\~ao para saber quando \'e que se pode comer as sementes do advers\'ario e quando se tem direito a mais uma jogada.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.5]{move-piece.png}}
+    \caption{Fun\c c\~ao move\_piece}
+    \label{img7}
+\end{figure}
+
+A fun\c c\~ao \textcolor{blue}{eat\_seeds} est\'a encarregue de tratar da l\'ogica para efetuar o movimento de captura das sementes. Foi criada uma lista, chamada \textcolor{blue}{opposite}, que auxilia este processo, onde guarda o lado oposto de todas as casas, sendo assim mais f\'acil processar esta opera\c c\~ao.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.4]{eat-seeds.png}}
+    \caption{Fun\c c\~ao eat\_seeds}
+    \label{img8}
+\end{figure}
+
+Para assegurar que a posi\c c\~ao escolhida pelo utilizador \'e uma posi\c c\~ao v\'alida, existe a fun\c c\~ao \textcolor{blue}{verify\_move}, que verifica se a posi\c c\~ao escolhida \'e um n\'umero e que est\'a dentro da parte jog\'avel do tabuleiro referente \`a vez do utilizador.
+As fun\c c\~oes \textcolor{blue}{game\_over} e \textcolor{blue}{player\_win}, s\~ao duas fun\c c\~oes que dizem respeito ao final do jogo, sendo que a primeira verifica se a partida acabou e a segunda retorna o jogador que ganhou a partida.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.4]{game-over.png}}
+    \caption{Fun\c c\~ao game\_over}
+    \label{img9}
+\end{figure}
 
 \section{Algoritmos Implementados}
-Inserir Texto
 
-\section{Experiências e Resultados}
-Inserir Texto
+
+Para este projeto o algoritmo pedido foi o minimax. Usamos o minimax e o minimax com cortes alpha-beta\cite{b5}\cite{b6}.
+
+% \begin{figure}[htbp]
+%     \centerline{\includegraphics[scale=0.5]{minimax.png}}
+%     \caption{Fun\c c\~ao minimax}
+%     \label{img10}
+% \end{figure}
+
+Minimax \'e um algoritmo \'e uma regra de decis\~ao para minimizar a perda no pior cen\'ario poss\'ivel, neste caso queremos minimizar os ganhos do advers\'ario.
+O algoritmo \'e auxiliado por fun\c c\~oes que ajudam a avaliar o qu\~ao boa \'e a solu\c c\~ao. S\~ao usadas duas fun\c c\~oes, \textcolor{blue}{utility\_function}, que avalia a solu\c c\~ao caso se trate de uma situa\c c\~ao terminal, isto \'e, se \'e uma vit\'oria, derrota ou empate e a \textcolor{blue}{heuristic}, que avalia o tabuleiro no turno do jogador.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[scale=0.3]{heuristic.png}}
+    \caption{Fun\c c\~ao heuristic}
+    \label{img11}
+\end{figure}
+
+O minimax avalia todas as jogados poss\'iveis a uma determinada profundidade. Caso existam muitas op\c c\~oes, o algoritmo rapidamente esgota os recursos da m\'aquina. Para torna este algoritmo mais eficiente, existe uma varia\c c\~ao, minimax alpha-beta. Isto permite corta ramos de explora\c c\~ao descess\'arios sem alterar a solu\c c\~ao final, aumentando assim a efici\^encia do algoritmo.\newline
+ 
+% \begin{figure}[htbp]
+%     \centerline{\includegraphics[scale=0.5]{minimax.png}}
+%     \caption{Fun\c c\~ao minimax}
+%     \label{img10}
+% \end{figure}
+
+\section{Experi\^encias e Resultados}
+Para testar as duas vers\~oes dos algoritmos, fizemos a m\'edia do tempo que o algoritmo demora a tomar uma decis\~ao a diferentes n\'iveis de profundidade. A forma como o c\'alculo foi efetuado, foi atrav\'es da soma de todos os tempos ao longo de vinte partidas e dividindo o resultado pelo n\'umero total de tempos registados. Os resultados s\~ao os que se seguem:\\ 
+\newline
+
+\centerline{
+\begin{tabular}{| c | c |}
+    \hline	
+        \multicolumn{2}{ | c |}{Minimax} \\ \hline
+        Depth & Time (Average) \\ \hline
+        1 & 6.355434782608699e-05 \\
+        2&0.00038020624999999993 \\
+        3&0.0015099647058823508 \\
+        4&0.007639854166666668 \\
+        5&0.03351009166666666 \\
+        6&0.1736062576923077 \\
+        7&0.5134596305555558 \\
+        8&2.5876256178571433 \\
+        9&9.929812355000013 \\
+        10&---\\
+    \hline  
+\end{tabular}
+}
+
+\centerline{
+\begin{tabular}{| c | c |}
+    \hline	
+        \multicolumn{2}{ | c |}{Minimax alpha-beta} \\ \hline
+        Depth & Time (Average) \\ \hline
+        1&7.478478260869559e-05 \\
+        2&0.00029995625000000034 \\
+        3&	0.0006773529411764701 \\ 
+        4&	0.003206154166666668 \\
+        5&	0.00663799166666667 \\
+        6&	0.026838650000000016 \\
+        7&	0.059131891666666735 \\
+        8&	0.16887341071428577 \\
+        9&	0.34320350250000004 \\
+        10&	1.1970522824999992 \\
+    \hline  
+\end{tabular}
+}
+
+Para testar a qualidade das solu\c c\~oes simulamos dez jogos consecutivos de um agente com o algoritmo minimax alpha-beta contra um com escolhas aleat\'orias. O agente aleat\'orio \'e para verificar o qu\~ao consistente \'e o algoritmo a fazer as melhores escolhas. Os resultados s\~ao os que se seguem:
+\newline
+
+\centerline{
+\begin{tabular}{| c | c | c |}
+    \hline
+        \multirow{2}{*}{Depth} & \multicolumn{2}{| c |}{Victories}\\
+        & Jogador 1 & Jogador 2\\\hline
+        1&	5/10 & 5/10\\
+        2&	8/10 & 8/10\\
+        3&	7/10 & 7/10\\
+        4&	8/10 & 9/10\\
+        5&	7/10 & 9/10\\
+        6&	9/10 & 9/10\\
+        7&	9/10 & 9/10\\
+        8&	9/10 & 10/10\\
+        9&	10/10 & 9/10\\
+        10&	8/10 & 10/10\\
+    \hline  
+\end{tabular}
+}
+
 
 \section{Conclus\~ao}
 
-Apesar de estes algoritmos j\'a terem sido abordados nas aulas, o desafio ser\'a juntar estes conhecimentos de forma a criar um projeto coeso e funcional.
+No que diz respeito \`a implementa\c c\~ao do jogo e dos algoritmos, o trabalho est\'a est\'avel apresentando os resultados esperados. Existiu alguma dificuldade a encontrar a heur\'istica mais correta para o problema, de forma a obter os melhores resultados. De forma a melhorar o trabalho no futuro, seria interessante experimentar um maior n\'umero de heur\'isticas e fazer a transi\c c\~ao para uma interface gr\'afica.
+
 
 % Before you begin to format your paper, first write and save the content as a 
 % separate text file. Complete all content and organizational editing before 
@@ -330,8 +441,8 @@ Apesar de estes algoritmos j\'a terem sido abordados nas aulas, o desafio ser\'a
 \bibitem{b2} https://github.com/mhchong/Mancala-Game
 \bibitem{b3} https://github.com/cypreess/py-mancala
 \bibitem{b4} https://www.johnpratt.com/items/mancala/index.html
-\bibitem{b5} https://en.wikipedia.org/wiki/Minimax#Pseudocode
-\bibitem{b6} https://en.wikipedia.org/wiki/Alpha–beta\_pruning#Pseudocode
+\bibitem{b5} https://en.wikipedia.org/wiki/Minimax\#Pseudocode
+\bibitem{b6} https://en.wikipedia.org/wiki/Alpha–beta\_pruning\#Pseudocode
 \bibitem{b7} https://www.ultraboardgames.com/mancala/strategies.php
 \bibitem{b8} https://www.ultraboardgames.com/mancala/best-opening-move.php
 \bibitem{b9} https://github.com/KeithGalli/Connect4-Python
