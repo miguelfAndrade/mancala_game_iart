@@ -2,11 +2,11 @@ import sys
 import time
 import math
 
-import pygame
+import tkinter
 
 import mancala
 import ai
-import ui
+# import ui
 
 # player vs player mode in command line
 def player_vs_player(board):

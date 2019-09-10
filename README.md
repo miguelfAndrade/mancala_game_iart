@@ -1,1 +1,1 @@
-# mancala_game_iart
+# mancala game with artificial intelligence
