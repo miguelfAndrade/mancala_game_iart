@@ -22,12 +22,15 @@ def main_gui():
     canvas = tkinter.Canvas(root, height = w_height, width = w_width)
     canvas.pack()
     
-    # photo1 = tkinter.PhotoImage(file = "0380.png")
-    # tkinter.Label(root, image = photo1, bg = 'black').pack()
-
-
     frame = tkinter.Frame(root, bg = white)
     frame.place(relwidth = 1, relheight = 1)
+
+
+    # photo1 = tkinter.PhotoImage(file = "teste_foto.png")
+    # bkg_label = tkinter.Label(root, image = photo1)
+    # bkg_label.place(x = -500, y = -500, relwidth = 2, relheight = 2)
+
+
 
     root.mainloop()
 
