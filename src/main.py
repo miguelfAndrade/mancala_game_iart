@@ -2,11 +2,16 @@ import sys
 import time
 import math
 
-import tkinter
+# import tkinter
 
 import mancala
 import ai
 # import ui
+
+def not_implemented_warning():
+    print("\n\nNot implemented yet!")
+    time.sleep(1)
+
 
 # player vs player mode in command line
 def player_vs_player(board):
@@ -214,26 +219,31 @@ def main_cmd_line_game():
 
 # Auxiliar function for choosing between the graphical interface and the command line interface
 def choose_cmd_or_gui():
-    print("\n\n\nMANCALA BOARD GAME")
-    print("\nSelect one of the options:")
-    print("1 - Command Line Game")
-    print("2 - Graphical Interface Game")
     while(True):
-        try:
-            user = int(input("Select: "))
-            if(user == 1 or user == 2):
-                break
-            else:
-                print("Choose between 1 and 2!")
+        print("\n\n\nMANCALA BOARD GAME")
+        print("\nSelect one of the options:")
+        print("1 - Command Line Game")
+        print("2 - Graphical Interface Game")
+        print("0 - Exit Command Line Menu")
+        while(True):
+            try:
+                user = int(input("Select: "))
+                if(user == 1 or user == 2 or user == 0):
+                    break
+                else:
+                    print("Choose 0, 1 or 2!")
+                    continue
+            except Exception:
+                print("INVALID INPUT!")
                 continue
-        except Exception:
-            print("INVALID INPUT!")
+        if(user == 1):
+            main_cmd_line_game()
+        elif( user == 2):
+            # ui.main_gui()
+            not_implemented_warning()
             continue
-    if(user == 1):
-        main_cmd_line_game()
-    else:
-        # ui.main_gui()
-        print("Not implemented yet!")
+        else:
+            break
 
 
 
